@@ -46,5 +46,51 @@
     </footer>
 
     <script src="app.js"></script>
+    <script>
+      // Função para criar o card de atividade com lista de participantes
+      function createActivityCard(name, activity) {
+        const card = document.createElement('div');
+        card.className = 'activity-card';
+
+        card.innerHTML = `
+          <h4>${name}</h4>
+          <p><strong>Description:</strong> ${activity.description}</p>
+          <p><strong>Schedule:</strong> ${activity.schedule}</p>
+          <p><strong>Max Participants:</strong> ${activity.max_participants}</p>
+          <div class="participants-section">
+            <strong>Participants:</strong>
+            <ul class="participants-list">
+              ${activity.participants && activity.participants.length > 0
+                ? activity.participants.map(email => `<li>${email}</li>`).join('')
+                : '<li class="no-participants">No participants yet.</li>'}
+            </ul>
+          </div>
+        `;
+        return card;
+      }
+
+      // Atualize a função que carrega as atividades para usar o novo card
+      async function loadActivities() {
+        const res = await fetch('/activities');
+        const data = await res.json();
+        const activitiesList = document.getElementById('activities-list');
+        activitiesList.innerHTML = '';
+        Object.entries(data).forEach(([name, activity]) => {
+          activitiesList.appendChild(createActivityCard(name, activity));
+        });
+
+        // Preencher o select do formulário
+        const select = document.getElementById('activity');
+        select.innerHTML = '<option value="">-- Select an activity --</option>';
+        Object.keys(data).forEach(name => {
+          const option = document.createElement('option');
+          option.value = name;
+          option.textContent = name;
+          select.appendChild(option);
+        });
+      }
+
+      loadActivities();
+    </script>
   </body>
 </html>
