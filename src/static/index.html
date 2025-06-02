@@ -61,7 +61,11 @@
             <strong>Participants:</strong>
             <ul class="participants-list">
               ${activity.participants && activity.participants.length > 0
-                ? activity.participants.map(email => `<li>${email}</li>`).join('')
+                ? activity.participants.map(email => {
+                    const li = document.createElement('li');
+                    li.textContent = email;
+                    return li.outerHTML;
+                  }).join('')
                 : '<li class="no-participants">No participants yet.</li>'}
             </ul>
           </div>
